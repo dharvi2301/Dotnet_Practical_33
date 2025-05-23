@@ -1,0 +1,63 @@
+﻿@page "/employeeDetail/{id:int}"
+@using Practical_33_Blazor_Server_App.Model
+@using Practical_33_Blazor_Server_App.Repository
+@inject IEmployeeRepository employeeRepo
+@inject NavigationManager navManager
+
+<h3>Employee Detail</h3>
+
+@if (employee == null)
+{
+    <p><em>Loading employee details...</em></p>
+}
+else
+{
+    <div class="container mt-5">
+        <div class="card shadow-lg border-primary">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Employee Details</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Employee ID</dt>
+                    <dd class="col-sm-9">@employee.Id</dd>
+
+                    <dt class="col-sm-3">Name</dt>
+                    <dd class="col-sm-9">@employee.Name</dd>
+
+                    <dt class="col-sm-3">Email</dt>
+                    <dd class="col-sm-9">@employee.Email</dd>
+
+                    <dt class="col-sm-3">Department</dt>
+                    <dd class="col-sm-9">@employee.Department</dd>
+
+                    <dt class="col-sm-3">Salary</dt>
+                    <dd class="col-sm-9">₹@employee.Salary</dd>
+                </dl>
+            </div>
+            <div class="card-footer text-end">
+                <button class="btn btn-secondary" @onclick="GoBack">
+                    <i class="bi bi-arrow-left-circle"></i> Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private EmployeeModel employee;
+
+    protected override void OnInitialized()
+    {
+        employee = employeeRepo.GetEmployeeById(id);
+    }
+
+    private void GoBack()
+    {
+        navManager.NavigateTo("/");
+    }
+}

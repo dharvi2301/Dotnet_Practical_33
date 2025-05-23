@@ -1,0 +1,117 @@
+﻿@page "/"
+@using Practical_33_Blazor_Server_App.Model
+@using Practical_33_Blazor_Server_App.Repository
+@inject IEmployeeRepository employeeRepo
+@inject NavigationManager navManager
+@inject IJSRuntime js
+
+
+@if (employees == null)
+{
+    <div class="text-center mt-4">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else if (!employees.Any())
+{
+    <div class="alert alert-warning text-center mt-4">
+        No employees found.
+    </div>
+}
+else
+{
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Employee Directory</h2>
+        <table class="table table-hover table-bordered table-striped shadow">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Salary</th>
+                    <th colspan="3">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-center align-middle">
+                @foreach (var emp in employees)
+                {
+                    <tr>
+                        <td>@emp.Id</td>
+                        <td>@emp.Name</td>
+                        <td>@emp.Email</td>
+                        <td>@emp.Department</td>
+                        <td>@emp.Salary.ToString("C")</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" title="View" @onclick="() => ViewDetail(emp.Id)">
+                                <i class="bi bi-eye"></i> View
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" title="Edit" @onclick="() => EditEmployee(emp.Id)">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" title="Delete" @onclick="() => ConfirmDelete(emp.Id)">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+@code {
+    private List<EmployeeModel> employees;
+
+    protected override void OnInitialized()
+    {
+        LoadData();
+    }
+
+    private void LoadData()
+    {
+        employees = employeeRepo.GetAllEmployees().ToList();
+    }
+
+    private void ViewDetail(int id)
+    {
+        navManager.NavigateTo($"/employeeDetail/{id}");
+    }
+
+    private void EditEmployee(int id)
+    {
+        navManager.NavigateTo($"/employee/edit/{id}");
+    }
+
+    private async Task ConfirmDelete(int id)
+    {
+        bool confirm;
+        var emp = employeeRepo.GetEmployeeById(id);
+        if (emp != null)
+        {
+            confirm = await js.InvokeAsync<bool>("confirm", $"Are you sure you want to delete {emp.Name}");
+        }
+        else
+        {
+            confirm = false;
+        }
+
+        if (confirm)
+        {
+            employeeRepo.DeleteEmployee(id);
+            LoadData();
+        }
+    }
+
+}
+
+
+
+
