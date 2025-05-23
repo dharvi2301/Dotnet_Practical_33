@@ -4,7 +4,7 @@
 
 namespace Practical_33_Blazor_Server_App.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class firstMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

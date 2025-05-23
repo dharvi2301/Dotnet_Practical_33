@@ -11,8 +11,8 @@ using Practical_33_Blazor_Server_App.Data;
 namespace Practical_33_Blazor_Server_App.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250513054053_InitialMigration1")]
-    partial class InitialMigration1
+    [Migration("20250523103147_firstMigration")]
+    partial class firstMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
